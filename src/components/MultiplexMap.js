@@ -35,8 +35,8 @@ const MultiplexMap = () => {
               .style("stroke", "#FF5555")
               .style("stroke-width", "2")
 
-            tooltipRef.current.style.left = `${event.clientX + 2}px`;
-            tooltipRef.current.style.top = `${event.clientY + 2}px`;
+            tooltipRef.current.style.left = `${event.clientX + 8}px`;
+            tooltipRef.current.style.top = `${event.clientY + 8}px`;
             tooltipRef.current.style.display = "flex";
             titleRef.current.innerHTML = datum.properties.zone;
           })
