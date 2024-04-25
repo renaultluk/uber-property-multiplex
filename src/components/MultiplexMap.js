@@ -2,8 +2,9 @@ import * as d3 from "d3";
 import { useEffect, useRef, useState } from "react";
 import "./multiplex-map.css";
 
-const MultiplexMap = () => {
+const MultiplexMap = (props) => {
   const ref = useRef();
+  const centroidRef = useRef({});
   const tooltipRef = useRef();
   const titleRef = useRef();
 
@@ -17,7 +18,7 @@ const MultiplexMap = () => {
       const path = d3.geoPath().projection(myProjection)
 
       function drawMap(data) {
-        console.log(data)
+        centroidRef.current = {}
         svg.append("g")
           .selectAll("path")
           .data(data.features)
@@ -35,6 +36,7 @@ const MultiplexMap = () => {
               .style("stroke", "#FF5555")
               .style("stroke-width", "2")
 
+            console.log(datum)
             tooltipRef.current.style.left = `${event.clientX + 8}px`;
             tooltipRef.current.style.top = `${event.clientY + 8}px`;
             tooltipRef.current.style.display = "flex";
@@ -50,11 +52,45 @@ const MultiplexMap = () => {
 
             tooltipRef.current.style.display = "none";
           })
+          .each(function (d) {
+            // var bbox = this.getBoundingClientRect();
+            // centroidRef.current.push([(bbox.left + bbox.right) / 2, (bbox.top + bbox.bottom)])
+            // console.log(d)
+            centroidRef.current[d.properties.location_id] = path.centroid(d.geometry)
+          })
           ;
+
+          console.log(centroidRef.current)
       }
 
+      // var link = []
+      //   Object.values(props.edges).forEach((node) => {
+      //     node.forEach(function(dest){
+      //       var source = centroidRef.current[node]
+      //       var target = centroidRef.current[dest.toString()]
+      //       console.log(source, target)
+      //       var topush = {type: "LineString", coordinates: [source, target]}
+      //       link.push(topush)
+      //     })
+      //   })
+
+      // console.log(link)
+
+      // svg
+      // .append("g")
+      // .selectAll("myPath")
+      // .data(link)
+      // .enter()
+      // .append("path")
+      //   .attr("class", "connectedEdge")
+      //   .attr("d", function(d){ return path(d)})
+      //   .style("fill", "none")
+      //   .style("stroke", "#69b3a2")
+      //   .style("stroke-width", 2)
+
+
       d3.json("/shapes.geojson").then(response => drawMap(response))
-  }, []);
+  }, [props.edges]);
 
   return (
     <>
